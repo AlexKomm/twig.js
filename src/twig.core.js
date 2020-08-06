@@ -1041,8 +1041,12 @@ module.exports = function (Twig) {
         }
 
         if (block === undefined && this.template.parentTemplate !== null) {
-            // Block defined in the parent template when extending
-            block = this.template.parentTemplate.getBlock(name);
+            // Block defined in any ancestor template when extending (closest parent first)
+            let template = this.template.parentTemplate;
+            while (block === undefined && template !== null) {
+                block = template.getBlock(name);
+                template = template.parentTemplate;
+            }
         }
 
         return block;
